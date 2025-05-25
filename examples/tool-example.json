@@ -1,0 +1,40 @@
+{
+  "name": "Syndication Tool",
+  "shortDescription": "Automated syndication system for developer tools across multiple platforms",
+  "longDescription": "A comprehensive TypeScript-based system that enables single-command distribution of open source developer tools across multiple online platforms. Features include multi-platform support (Reddit, Dev.to, GitHub Discussions), smart content formatting, rate limit management, and flexible configuration options. Perfect for open source maintainers who want to maximize their tool's visibility without manual posting to each platform.",
+  "url": "https://github.com/example/syndication-tool",
+  "category": [
+    "automation",
+    "productivity", 
+    "developer-tools",
+    "marketing",
+    "open-source"
+  ],
+  "targetAudience": [
+    "developers",
+    "devops-engineers", 
+    "open-source-maintainers",
+    "technical-writers",
+    "product-managers"
+  ],
+  "tags": [
+    "automation",
+    "syndication", 
+    "social-media",
+    "marketing",
+    "typescript",
+    "cli",
+    "reddit",
+    "devto",
+    "github"
+  ],
+  "version": "1.0.0",
+  "githubUrl": "https://github.com/example/syndication-tool",
+  "documentationUrl": "https://docs.example.com/syndication-tool",
+  "metadata": {
+    "license": "MIT",
+    "language": "TypeScript",
+    "platforms": ["Node.js"],
+    "keywords": ["syndication", "automation", "developer-tools"]
+  }
+}
