@@ -51,6 +51,18 @@ export DEVTO_TAGS="opensource,tools"
 # GitHub
 export GITHUB_TOKEN="your_github_token"
 export GITHUB_REPOSITORIES="owner/repo1,owner/repo2"
+
+# LinkedIn
+export LINKEDIN_CLIENT_ID="your_linkedin_client_id"
+export LINKEDIN_CLIENT_SECRET="your_linkedin_client_secret"
+
+# Twitter/X
+export TWITTER_API_KEY="your_twitter_api_key"
+export TWITTER_API_SECRET="your_twitter_api_secret"
+
+# Hacker News
+export HACKERNEWS_USERNAME="your_hackernews_username"
+export HACKERNEWS_PASSWORD="your_hackernews_password"
 ```
 
 ### 3. Syndicate Your Tool
@@ -72,9 +84,9 @@ syndicate syndicate \
 | Reddit | ✅ | Multiple subreddits, automatic flair, link/text posts |
 | Dev.to | ✅ | Article publishing, tags, canonical URLs |
 | GitHub Discussions | ✅ | Multiple repositories, discussion categories |
-| LinkedIn | 🚧 | Coming soon |
-| Twitter/X | 🚧 | Coming soon |
-| Hacker News | 🚧 | Coming soon |
+| LinkedIn | ✅ | Professional network posts, company pages |
+| Twitter/X | ✅ | Tweet publishing, thread support |
+| Hacker News | ✅ | Story submissions, community integration |
 
 ## 🔧 Configuration
 
@@ -173,6 +185,9 @@ syndicate config --validate
 
 # Show current configuration (sensitive data redacted)
 syndicate config --show
+
+# Set a configuration value
+syndicate config --set platforms.reddit.enabled=false
 ```
 
 ### Platform Management
@@ -224,6 +239,39 @@ syndicate retry --tool-id "my-tool"
    export GITHUB_DISCUSSION_CATEGORY="General"
    ```
 
+### LinkedIn
+
+1. Create a LinkedIn application at https://www.linkedin.com/developers/apps
+2. Configure OAuth 2.0 redirect URLs
+3. Set environment variables:
+   ```bash
+   export LINKEDIN_CLIENT_ID="your_client_id"
+   export LINKEDIN_CLIENT_SECRET="your_client_secret"
+   export LINKEDIN_REDIRECT_URI="your_redirect_uri"
+   ```
+
+### Twitter/X
+
+1. Create a Twitter application at https://developer.twitter.com/apps
+2. Generate OAuth 1.0a credentials
+3. Set environment variables:
+   ```bash
+   export TWITTER_API_KEY="your_api_key"
+   export TWITTER_API_SECRET="your_api_secret"
+   export TWITTER_ACCESS_TOKEN="your_access_token"
+   export TWITTER_ACCESS_TOKEN_SECRET="your_access_token_secret"
+   ```
+
+### Hacker News
+
+1. Create a Hacker News account at https://news.ycombinator.com
+2. Obtain your account credentials
+3. Set environment variables:
+   ```bash
+   export HACKERNEWS_USERNAME="your_username"
+   export HACKERNEWS_PASSWORD="your_password"
+   ```
+
 ## 🎨 Content Templates
 
 Customize how your content appears on each platform using templates:
@@ -234,7 +282,9 @@ Customize how your content appears on each platform using templates:
     "reddit": "{name} - {shortDescription}",
     "dev.to": "🚀 {name}: {shortDescription}",
     "github": "## {name}\\n\\n{shortDescription}\\n\\n**Link:** {url}",
-    "twitter": "🚀 {name}: {shortDescription} {url} #{tags}"
+    "linkedin": "🚀 {name}: {shortDescription}\\n\\n{url}\\n\\n#developers #opensource",
+    "twitter": "🚀 {name}: {shortDescription} {url} #{tags}",
+    "hackernews": "{name}: {shortDescription}"
   }
 }
 ```
@@ -260,6 +310,19 @@ The tool includes comprehensive error handling:
 
 ## 📊 Examples
 
+The `examples/` directory contains sample configuration files:
+
+- `syndication.config.example.json` - Complete platform configuration
+- `tool-example.json` - Sample tool definition
+
+Copy these files and customize them for your needs:
+
+```bash
+cp examples/syndication.config.example.json syndication.config.json
+cp examples/tool-example.json tool.json
+# Edit the files with your platform credentials and tool information
+```
+
 ### Basic Tool Syndication
 
 ```bash
@@ -275,10 +338,10 @@ syndicate syndicate \
 ### Platform-Specific Syndication
 
 ```bash
-# Only to Reddit and Dev.to
+# Only to specific platforms
 syndicate syndicate \
   --file tool.json \
-  --platforms "reddit,dev.to"
+  --platforms "reddit,dev.to,github,linkedin"
 ```
 
 ### Dry Run Mode
@@ -306,7 +369,7 @@ syndicate syndicate \
 npm test
 
 # Run tests with coverage
-npm run test:coverage
+npm test -- --coverage
 
 # Run linting
 npm run lint
@@ -320,14 +383,16 @@ npm run typecheck
 ### Programmatic Usage
 
 ```typescript
-import { SyndicationEngine, ConfigManager, RedditAdapter, DevToAdapter } from 'syndication-tool';
+import { SyndicationEngine, ConfigManager } from 'syndication-tool';
+import { RedditAdapter, DevToAdapter, GitHubAdapter } from 'syndication-tool/adapters';
 
 const configManager = new ConfigManager();
 await configManager.loadConfig();
 
 const adapters = [
   new RedditAdapter(configManager.getPlatformConfig('reddit')),
-  new DevToAdapter(configManager.getPlatformConfig('dev.to'))
+  new DevToAdapter(configManager.getPlatformConfig('dev.to')),
+  new GitHubAdapter(configManager.getPlatformConfig('github'))
 ];
 
 const engine = new SyndicationEngine(configManager, adapters);
@@ -343,7 +408,7 @@ const tool = {
 };
 
 const result = await engine.syndicate(tool, {
-  platforms: ['reddit', 'dev.to'],
+  platforms: ['reddit', 'dev.to', 'github'],
   dryRun: false,
   concurrent: true
 });
@@ -393,7 +458,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/example/syndication-tool)
-- [Issue Tracker](https://github.com/example/syndication-tool/issues)
-- [Documentation](https://docs.example.com/syndication-tool)
+- [GitHub Repository](https://github.com/syndication-tool/syndication-tool)
+- [Issue Tracker](https://github.com/syndication-tool/syndication-tool/issues)
 - [NPM Package](https://www.npmjs.com/package/syndication-tool)
