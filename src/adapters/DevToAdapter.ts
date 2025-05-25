@@ -242,16 +242,18 @@ export class DevToAdapter extends BasePlatformAdapter implements PlatformAdapter
     return sanitized;
   }
 
-  private extractErrorMessage(error: any): string {
-    if (error.response?.data) {
-      const data = error.response.data;
+  private extractErrorMessage(error: unknown): string {
+    const errorObj = error as { response?: { data?: unknown }; message?: string };
+    
+    if (errorObj.response?.data) {
+      const data = errorObj.response.data as Record<string, unknown>;
       
       if (data.error) {
-        return data.error;
+        return String(data.error);
       }
       
       if (data.errors && Array.isArray(data.errors)) {
-        return data.errors.join(', ');
+        return data.errors.map(e => String(e)).join(', ');
       }
       
       if (typeof data === 'string') {
@@ -259,8 +261,8 @@ export class DevToAdapter extends BasePlatformAdapter implements PlatformAdapter
       }
     }
 
-    if (error.message) {
-      return error.message;
+    if (errorObj.message) {
+      return errorObj.message;
     }
 
     return 'Unknown error occurred';

@@ -9,7 +9,7 @@ export interface GlobalConfig {
   concurrency: number;
   defaultRetries: number;
   logLevel: 'debug' | 'info' | 'warn' | 'error';
-  platforms: any[];
+  platforms: PlatformConfig[];
   templates: {
     [key: string]: string;
   };
@@ -48,11 +48,11 @@ export class ConfigManager {
     return this.config;
   }
 
-  getPlatformConfig(platform: string): any {
+  getPlatformConfig(platform: string): PlatformConfig | undefined {
     return this.getConfig().platforms.find(p => p.platform === platform);
   }
 
-  getEnabledPlatforms(): any[] {
+  getEnabledPlatforms(): PlatformConfig[] {
     return this.getConfig().platforms.filter(p => p.enabled);
   }
 
@@ -131,7 +131,7 @@ export class ConfigManager {
     const config: Partial<GlobalConfig> = {};
 
     if (process.env.SYNDICATION_ENVIRONMENT) {
-      config.environment = process.env.SYNDICATION_ENVIRONMENT as any;
+      config.environment = process.env.SYNDICATION_ENVIRONMENT as 'development' | 'staging' | 'production';
     }
 
     if (process.env.SYNDICATION_CONCURRENCY) {
@@ -139,7 +139,7 @@ export class ConfigManager {
     }
 
     if (process.env.SYNDICATION_LOG_LEVEL) {
-      config.logLevel = process.env.SYNDICATION_LOG_LEVEL as any;
+      config.logLevel = process.env.SYNDICATION_LOG_LEVEL as 'debug' | 'info' | 'warn' | 'error';
     }
 
     if (process.env.SYNDICATION_DEFAULT_RETRIES) {
@@ -152,8 +152,8 @@ export class ConfigManager {
     return config;
   }
 
-  private loadPlatformConfigsFromEnv(): any[] {
-    const platforms: any[] = [];
+  private loadPlatformConfigsFromEnv(): PlatformConfig[] {
+    const platforms: PlatformConfig[] = [];
 
     // Reddit
     if (process.env.REDDIT_CLIENT_ID && process.env.REDDIT_CLIENT_SECRET) {
@@ -265,7 +265,7 @@ export class ConfigManager {
         // Merge templates object
         result.templates = { ...target.templates, ...source.templates };
       } else {
-        (result as any)[key] = (source as any)[key];
+        (result as Record<string, unknown>)[key] = (source as Record<string, unknown>)[key];
       }
     });
 
@@ -273,9 +273,9 @@ export class ConfigManager {
   }
 
   private mergePlatforms(
-    target: any[], 
-    source: any[]
-  ): any[] {
+    target: PlatformConfig[], 
+    source: PlatformConfig[]
+  ): PlatformConfig[] {
     const result = [...target];
 
     source.forEach(sourcePlatform => {

@@ -193,7 +193,18 @@ export class RedditAdapter extends BasePlatformAdapter implements PlatformAdapte
   ): Promise<PublicationResult> {
     const isTextPost = !content.url;
     
-    const submitData: any = {
+    interface RedditSubmitData {
+      sr: string;
+      kind: 'self' | 'link';
+      title: string;
+      api_type: 'json';
+      sendreplies: boolean;
+      text?: string;
+      url?: string;
+      flair_text?: string;
+    }
+
+    const submitData: RedditSubmitData = {
       sr: subreddit,
       kind: isTextPost ? 'self' : 'link',
       title: content.title,

@@ -136,7 +136,7 @@ export class SyndicationEngine {
     const promises = platforms.map(async (platform) => {
       await semaphore.acquire();
       try {
-        const publication = await this.syndicateToplatform(tool, platform, options);
+        const publication = await this.syndicateToPlatform(tool, platform, options);
         publications.push(publication);
       } catch (error) {
         const errorMessage = `Failed to syndicate to ${platform}: ${error}`;
@@ -159,7 +159,7 @@ export class SyndicationEngine {
   ): Promise<void> {
     for (const platform of platforms) {
       try {
-        const publication = await this.syndicateToplatform(tool, platform, options);
+        const publication = await this.syndicateToPlatform(tool, platform, options);
         publications.push(publication);
       } catch (error) {
         const errorMessage = `Failed to syndicate to ${platform}: ${error}`;
@@ -169,7 +169,7 @@ export class SyndicationEngine {
     }
   }
 
-  private async syndicateToplatform(
+  private async syndicateToPlatform(
     tool: Tool,
     platform: string,
     options: SyndicationOptions

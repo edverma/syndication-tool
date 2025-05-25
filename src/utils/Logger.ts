@@ -52,22 +52,22 @@ export class Logger {
     }
   }
 
-  debug(message: string, meta?: any): void {
-    this.winston.debug(message, { context: this.context, ...meta });
+  debug(message: string, meta?: unknown): void {
+    this.winston.debug(message, { context: this.context, ...(meta as Record<string, unknown> || {}) });
   }
 
-  info(message: string, meta?: any): void {
-    this.winston.info(message, { context: this.context, ...meta });
+  info(message: string, meta?: unknown): void {
+    this.winston.info(message, { context: this.context, ...(meta as Record<string, unknown> || {}) });
   }
 
-  warn(message: string, meta?: any): void {
-    this.winston.warn(message, { context: this.context, ...meta });
+  warn(message: string, meta?: unknown): void {
+    this.winston.warn(message, { context: this.context, ...(meta as Record<string, unknown> || {}) });
   }
 
-  error(message: string, error?: Error | any, meta?: any): void {
+  error(message: string, error?: Error | unknown, meta?: unknown): void {
     const errorMeta = error instanceof Error 
-      ? { error: error.message, stack: error.stack, ...meta }
-      : { error, ...meta };
+      ? { error: error.message, stack: error.stack, ...meta as Record<string, unknown> }
+      : { error, ...meta as Record<string, unknown> };
     
     this.winston.error(message, { context: this.context, ...errorMeta });
   }

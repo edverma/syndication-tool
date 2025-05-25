@@ -103,15 +103,17 @@ export abstract class BasePlatformAdapter implements PlatformAdapter {
     throw lastError!;
   }
 
-  protected isRetryableError(error: any): boolean {
-    if (error.response?.status) {
-      const status = error.response.status;
+  protected isRetryableError(error: unknown): boolean {
+    const errorObj = error as { response?: { status?: number }; code?: string };
+    
+    if (errorObj.response?.status) {
+      const status = errorObj.response.status;
       return status >= 500 || status === 429 || status === 408;
     }
     
-    return error.code === 'ECONNRESET' || 
-           error.code === 'ETIMEDOUT' || 
-           error.code === 'ENOTFOUND';
+    return errorObj.code === 'ECONNRESET' || 
+           errorObj.code === 'ETIMEDOUT' || 
+           errorObj.code === 'ENOTFOUND';
   }
 
   protected sleep(ms: number): Promise<void> {

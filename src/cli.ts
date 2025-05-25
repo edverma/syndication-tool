@@ -5,8 +5,9 @@ import * as dotenv from 'dotenv';
 import { ConfigManager } from './config';
 import { SyndicationEngine } from './core';
 import { RedditAdapter, DevToAdapter, GitHubAdapter } from './adapters';
-import { Tool, ToolValidator } from './models';
+import { Tool, ToolValidator, RedditConfig, DevToConfig, GitHubConfig, PlatformConfig } from './models';
 import { Logger } from './utils';
+import { SyndicationResult } from './core/SyndicationEngine';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -207,7 +208,20 @@ async function loadToolFromFile(filePath: string): Promise<Tool> {
   return toolData as Tool;
 }
 
-function createToolFromOptions(options: any): Tool {
+interface CliOptions {
+  toolName?: string;
+  toolUrl?: string;
+  shortDescription?: string;
+  longDescription?: string;
+  categories?: string;
+  audience?: string;
+  tags?: string;
+  version?: string;
+  githubUrl?: string;
+  docsUrl?: string;
+}
+
+function createToolFromOptions(options: CliOptions): Tool {
   if (!options.toolName || !options.toolUrl || !options.shortDescription || !options.longDescription) {
     throw new Error('Required options: --tool-name, --tool-url, --short-description, --long-description');
   }
@@ -244,13 +258,13 @@ function createAdapters(configManager: ConfigManager) {
 
     switch (platformConfig.platform) {
       case 'reddit':
-        adapters.push(new RedditAdapter(platformConfig as any));
+        adapters.push(new RedditAdapter(platformConfig as RedditConfig));
         break;
       case 'dev.to':
-        adapters.push(new DevToAdapter(platformConfig as any));
+        adapters.push(new DevToAdapter(platformConfig as DevToConfig));
         break;
       case 'github':
-        adapters.push(new GitHubAdapter(platformConfig as any));
+        adapters.push(new GitHubAdapter(platformConfig as GitHubConfig));
         break;
       default:
         logger.warn(`Unknown platform: ${platformConfig.platform}`);
@@ -260,7 +274,7 @@ function createAdapters(configManager: ConfigManager) {
   return adapters;
 }
 
-function displayResults(result: any) {
+function displayResults(result: SyndicationResult) {
   console.log(`\n🚀 Syndication Results for: ${result.tool.name}\n`);
   
   console.log('📊 Summary:');
@@ -270,7 +284,7 @@ function displayResults(result: any) {
   console.log(`  ⏭️  Skipped: ${result.summary.skipped}`);
   
   console.log('\n📝 Publications:');
-  result.publications.forEach((pub: any) => {
+  result.publications.forEach((pub) => {
     const status = pub.status === 'success' ? '✅' : 
                    pub.status === 'failed' ? '❌' : 
                    pub.status === 'in_progress' ? '🔄' : '⏳';
@@ -333,7 +347,7 @@ async function showConfig(configManager: ConfigManager) {
     
     // Redact sensitive information
     const sanitizedConfig = JSON.parse(JSON.stringify(config));
-    sanitizedConfig.platforms.forEach((platform: any) => {
+    sanitizedConfig.platforms.forEach((platform: PlatformConfig) => {
       if (platform.auth.apiKey) platform.auth.apiKey = '***REDACTED***';
       if (platform.auth.token) platform.auth.token = '***REDACTED***';
       if (platform.auth.clientSecret) platform.auth.clientSecret = '***REDACTED***';
