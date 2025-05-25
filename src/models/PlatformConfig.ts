@@ -85,12 +85,23 @@ export interface TwitterConfig extends PlatformConfig {
   };
 }
 
+export interface HackerNewsConfig extends PlatformConfig {
+  platform: 'hackernews';
+  settings: {
+    username: string;
+    postType: 'story' | 'ask' | 'show';
+    titleTemplate?: string;
+    includeDescription: boolean;
+  };
+}
+
 export type PlatformSpecificConfig = 
   | RedditConfig 
   | DevToConfig 
   | GitHubConfig 
   | LinkedInConfig 
-  | TwitterConfig;
+  | TwitterConfig
+  | HackerNewsConfig;
 
 export class PlatformConfigValidator {
   static validate(config: PlatformConfig): { isValid: boolean; errors: string[] } {

@@ -3,32 +3,7 @@ import { BasePlatformAdapter, FormattedContent, PlatformAdapter, PublicationResu
 import { Tool, GitHubConfig } from '../models';
 import { Logger } from '../utils';
 
-interface GitHubUser {
-  id: number;
-  login: string;
-  name: string;
-}
-
-interface GitHubRepository {
-  id: number;
-  name: string;
-  full_name: string;
-  owner: {
-    login: string;
-  };
-}
-
-interface GitHubDiscussion {
-  id: string;
-  number: number;
-  title: string;
-  body: string;
-  url: string;
-  category: {
-    id: string;
-    name: string;
-  };
-}
+// Removed unused interfaces to fix linting errors
 
 interface GitHubDiscussionCategory {
   id: string;
@@ -125,7 +100,6 @@ export class GitHubAdapter extends BasePlatformAdapter implements PlatformAdapte
     try {
       const githubConfig = this.config as GitHubConfig;
       const results: PublicationResult[] = [];
-      let hasSuccess = false;
 
       for (const repository of githubConfig.settings.repositories) {
         try {
@@ -133,7 +107,6 @@ export class GitHubAdapter extends BasePlatformAdapter implements PlatformAdapte
           results.push(result);
           
           if (result.success) {
-            hasSuccess = true;
             this.logger.info(`Successfully created discussion in ${repository}: ${result.url}`);
           } else {
             this.logger.warn(`Failed to create discussion in ${repository}: ${result.error}`);

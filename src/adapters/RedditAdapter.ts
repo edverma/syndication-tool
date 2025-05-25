@@ -136,7 +136,6 @@ export class RedditAdapter extends BasePlatformAdapter implements PlatformAdapte
     try {
       const redditConfig = this.config as RedditConfig;
       const results: PublicationResult[] = [];
-      let hasSuccess = false;
 
       for (const subreddit of redditConfig.settings.subreddits) {
         try {
@@ -144,7 +143,6 @@ export class RedditAdapter extends BasePlatformAdapter implements PlatformAdapte
           results.push(result);
           
           if (result.success) {
-            hasSuccess = true;
             this.logger.info(`Successfully published to r/${subreddit}: ${result.url}`);
           } else {
             this.logger.warn(`Failed to publish to r/${subreddit}: ${result.error}`);

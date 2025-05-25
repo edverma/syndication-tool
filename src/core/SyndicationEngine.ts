@@ -1,5 +1,5 @@
 import { Tool, Publication, PublicationStatus, PublicationManager } from '../models';
-import { PlatformAdapter, PublicationResult } from '../adapters';
+import { PlatformAdapter } from '../adapters';
 import { ConfigManager } from '../config';
 import { Logger } from '../utils/Logger';
 
